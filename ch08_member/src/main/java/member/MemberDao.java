@@ -9,6 +9,7 @@ public class MemberDao {
 	ResultSet rs;
 	String sql; 
 	
+	// id 중복체크 
 	public boolean checkId(String id) {
 		boolean flag = false;
 		try {
@@ -24,6 +25,7 @@ public class MemberDao {
 		return flag;
 	}
 	
+	// 회원가입
 	public boolean insertMember(Member bean) {
 		boolean flag = false;
 		
@@ -49,9 +51,47 @@ public class MemberDao {
  		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			pool.freeConnection(con);
+			pool.freeConnection(con, pstmt, rs);
 		}
-		
 		return flag; 
 	}
+	
+	// 로그인
+	public boolean loginMember(String id, String pw) {
+		boolean flag = false;
+		
+		try {
+			con= pool.getConnection();
+			sql= "select id, name from member where id = ? and pwd=?";
+			pstmt= con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			pstmt.setString(2, pw);
+			rs= pstmt.executeQuery(); // 결과를 담는 객체 rs
+			flag= rs.next(); // 있으면 true 반환하기에 바로 flag로 넣으면 됨
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con); // 다른 사람이 쓸 수 있게?
+		}
+		return flag;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
