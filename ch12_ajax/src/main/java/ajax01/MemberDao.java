@@ -1,6 +1,9 @@
 package ajax01;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class MemberDao {
 	private DBConnectionMgr pool = DBConnectionMgr.getInstance();
@@ -74,6 +77,58 @@ public class MemberDao {
 			pool.freeConnection(con); // 다른 사람이 쓸 수 있게?
 		}
 		return flag;
+	}
+	
+	// idm name, gender, email 가져오기
+	public Member SearchId(String id) {
+		Member m = new Member();
+		try {
+			con= pool.getConnection();
+			sql= "select id, name, gender, email from member where id = ?";
+			pstmt= con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery(); // 결과를 담는 객체 rs
+			if(rs.next()) {
+				m.setId(rs.getString("id"));
+				m.setName(rs.getString("name"));
+				m.setGender(rs.getString("gender"));
+				m.setEmail(rs.getString("email"));  // 1, 2, 3, 4로 하는 경우도 있었던 거 같은데???
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con); 
+		}
+		return m;
+	}
+	
+	// 전체 회원 검색
+	public ArrayList<Member> AllSearch() {
+		ArrayList<Member> allMem = new ArrayList<>();
+		
+		try {
+			con= pool.getConnection();
+			sql= "select * from member";
+			pstmt= con.prepareStatement(sql);
+			rs = pstmt.executeQuery(); 
+			
+			while(rs.next()) {
+				Member m = new Member();
+				
+			
+				m.setId(rs.getString("id"));
+				m.setName(rs.getString("name"));
+				m.setGender(rs.getString("gender"));
+				m.setEmail(rs.getString("email"));
+				
+				allMem.add(m);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con); 
+		}
+		return allMem;
 	}
 	
 	

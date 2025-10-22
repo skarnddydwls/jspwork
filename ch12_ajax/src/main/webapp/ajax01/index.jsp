@@ -231,9 +231,108 @@
 		})
 	</script>
 	
+	<h3>3. 서버에 데이터 전송 후, 조회된 데이터를 bean객체로 응답</h3>
 	
+	검색하고자 하는 회원 ID: <input id="inputId">
+	<input type="button" id="btn3" value="조회"><p/>
 	
+	<div id="output3"></div>
 	
+	<script type="text/javascript">
+		$("#btn3").click(function() {
+			$.ajax({
+				url : "ajax4.do",
+				data : {id : $("#inputId").val()},
+				success : function(result) {
+					console.log(result);
+					
+					/*
+					// 2.
+					if(result.status === "fail") {
+						$("#output3").html("<b style='color:red'>" + result.message + "</b>");
+					} else {
+						const value = "*********** 검색 결과 ***********<br>"
+									+ "ID : " + result.userId + "<br>"
+									+ "이름 : "  + result.userName + "<br>"
+									+ "성별 : "  + result.gender + "<br>"
+									+ "EMAIL : "  + result.email;
+						$("#output3").html(value);
+					}
+					*/
+					/*
+					// 3.
+					const value = "*********** 검색 결과 ***********<br>"
+						+ "ID : " + result.id + "<br>"
+						+ "이름 : "  + result.name + "<br>"
+						+ "성별 : "  + result.gender + "<br>"
+						+ "EMAIL : "  + result.email;
+					$("#output3").html(value);
+					*/
+					
+					// 4.
+					if(result.status === "fail") {
+						$("#output3").html("<b style='color:red'>" + result.message + "</b>");
+					} else {
+						const mem = result.member;
+						const value = "*********** 검색 결과 ***********<br>"
+									+ "ID : " + mem.id + "<br>"
+									+ "이름 : "  + mem.name + "<br>"
+									+ "성별 : "  + mem.gender + "<br>"
+									+ "EMAIL : "  + mem.email;
+						$("#output3").html(value);
+					}
+				},
+				error : function() {
+					console.log("ajax 통신 실패");
+				}
+			})
+		})
+	</script>
+	
+	<H3>4. 응답데이터로 조회된 여러 bean객체들이 담겨있는 ArrayList받기</H3>
+	
+	<input type="button" id="btn4" value="전체 회원 조회"><br><br>
+	<table id="output4" border="1">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>이름</th>
+				<th>성별</th>
+				<th>Email</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+	
+	<script>
+		$("#btn4").click(function() {
+			$.ajax({
+				url: "ajax5.do",
+				success: function(result){
+					console.log(result);
+					
+					let gen;
+					let value ="";
+					for(let i=0; i<result.length;i++){
+						if(result[i].gender == 1) gen ="남자";
+						else gen ="여자";
+						
+						value += "<tr>"
+							+ "<td>" + result[i].id + "</td>"
+							+ "<td>" + result[i].name + "</td>"
+							+ "<td>" + gen + "</td>"
+							+ "<td>" + result[i].email + "</td>"
+							+ "</tr>";
+					}
+					$("#output4 tbody").html(value);
+				},
+				error: function(){
+					console.log("통신 실패");
+				}
+			})
+		})
+	</script>
 	
 <%
 	for(int i=0;i<50;i++){
